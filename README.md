@@ -2,8 +2,6 @@
 
 ## Intro
 
-------
-
 Around the 20th of December 2020, there was one of the "usual" EMOTET email campaign hitting several countries. I had the possibility to get some sample and I decided to make this little analysis, to deep dive some specific aspects of the malware itself.
 
 In particular I had a look to how the malware has been written, with an analysis of the interesting techniques used.
