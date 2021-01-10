@@ -51,17 +51,17 @@ Size:       122880
 SHA1:       57cd8eac09714effa7b6f70b34039bbace4a3e23
 ```
 
-![DLL_exports](/home/cesare/Downloads/tmp/emotet/_post/DLL_exports.PNG)
+![DLL_exports](https://github.com/cecio/EMOTET-2020-Reversing/blob/main/pictures/DLL_exports.PNG)
 
 An initial overview of the dumped DLL, shows immediately that we don't have any string visible in it, no imports and a first look to the disassembly shows a heavily obfuscated code. We need to do some work here.
 
 I fired up **Ghidra** and started to snoop around. Starting from the only exported function `RunDLL` you quickly end up to `FUN_10009716` where you can spot a main loop with a kind of "State-Machine":
 
-<img src="/home/cesare/Downloads/tmp/emotet/_post/ghidra_main.PNG" alt="ghidra_main" style="zoom:75%;" />
+<img src="https://github.com/cecio/EMOTET-2020-Reversing/blob/main/pictures/ghidra_main.PNG" alt="ghidra_main" style="zoom:75%;" />
 
 It looks like that a given double-word (stored in `ECX`) is controlling what the program is doing. But this looks convoluted and not very easy to unroll, since nothing is really in clear. For example, if you try to isolate the library API call in **x64dbg**, you will face something like this:
 
-![xdbg_libcall](/home/cesare/Downloads/tmp/emotet/_post/xdbg_libcall.PNG)
+![xdbg_libcall](https://github.com/cecio/EMOTET-2020-Reversing/blob/main/pictures/xdbg_libcall.PNG)
 
 Every single API call is done in this way: there is a bunch of `MOV, XOR, SHIFT and PUSH` followed by a call to `xxx606F` (first red box), which decode in EAX the address of the function (called by the second red box). The number of `PUSH` just before the `CALL EAX` are the parameters, which could be worth to inspect.
 
@@ -115,21 +115,21 @@ This list was not complete (because I skipped on purpose some failing calls and 
 
 With the help of **Speakeasy** output and a combination of dynamic and static analysis (done with **x64gdb** and **Ghidra**), I was able to reconstruct the main flows of the Malware. Consider that these flows are not complete, they are high level snapshot of what is going on for some (not all) the "states". I'm sure something is missing. This is the "main" flow
 
-![emotet_diag_general](/home/cesare/Downloads/tmp/emotet/_post/emotet_diag_general.png)
+![emotet_diag_general](https://github.com/cecio/EMOTET-2020-Reversing/blob/main/pictures/emotet_diag_general.png)
 
 Then we have the "Persistency" flow (the yellow boxes are the interesting ones):
 
-![emotet_diag_persistency](/home/cesare/Downloads/tmp/emotet/_post/emotet_diag_persistency.png)
+![emotet_diag_persistency](https://github.com/cecio/EMOTET-2020-Reversing/blob/main/pictures/emotet_diag_persistency.png)
 
 And the initial "C2" communication flow:
 
-![emotet_diag_C2](/home/cesare/Downloads/tmp/emotet/_post/emotet_diag_C2.png)
+![emotet_diag_C2](https://github.com/cecio/EMOTET-2020-Reversing/blob/main/pictures/emotet_diag_C2.png)
 
 Not all the states were explored. I focused on persistence and initial C2. The great thing of this approach is that you can now alter the execution flow, by setting the `ECX` value you want to explore or execute.
 
 I added a lot of details in the Ghidra file, by renaming the API calls and inserting comments. Every number reported in the graphs (ex **19a**) are in the comments, so you can easily track the code section.
 
-![Ghidra_commented](/home/cesare/Downloads/tmp/emotet/_post/Ghidra_commented.PNG)
+![Ghidra_commented](https://github.com/cecio/EMOTET-2020-Reversing/blob/main/pictures/Ghidra_commented.PNG)
 
 I renamed the functions with this standard:
 
@@ -140,11 +140,11 @@ I renamed the functions with this standard:
 
 All the strings are encrypted in a BLOB, located, in this particular dumped sample, at `0x1C800`
 
-![encrypted_blob](/home/cesare/Downloads/tmp/emotet/_post/encrypted_blob.png)
+![encrypted_blob](https://github.com/cecio/EMOTET-2020-Reversing/blob/main/pictures/encrypted_blob.png)
 
 The green box is the XOR key and the yellow one is the length of the string. The function used to perform the decryption is the `__decrypt_buffer_string_FUN_10006aba` and `__decrypt_headers_footer_FUN_100033f4`
 
-<img src="/home/cesare/Downloads/tmp/emotet/_post/Ghidra_6aba.PNG" alt="Ghidra_6aba"  />
+<img src="https://github.com/cecio/EMOTET-2020-Reversing/blob/main/pictures/Ghidra_6aba.PNG" alt="Ghidra_6aba"  />
 
 Every single string is decrypted and then removed from memory after usage. This is true even for C format strings. So you will not find anything in memory if you try to inspect the mapped sections at runtime.
 
@@ -154,7 +154,7 @@ As said before, I added a specific section in the **Speakeasy** script to dump t
 
 IP of C2 are dumped form the same BLOB (in this case at `0x1CA00`) just after the decryption in step `20a`. 
 
-![ip_list](/home/cesare/Downloads/tmp/emotet/_post/ip_list.png)
+![ip_list](https://github.com/cecio/EMOTET-2020-Reversing/blob/main/pictures/ip_list.png)
 
 As stated in Fortinet Analysis, this list is made of IP (green box) and port (yellow box). You can decode the whole list if you pass this part of the binary in the following python code:
 
@@ -189,7 +189,7 @@ The section installing the service is the **20a** (state `0x204C3E9E`). The high
 
 In section **8a** (state `0x1C904052`) we can spot out the load of a RSA public key
 
-![RSA_key](/home/cesare/Downloads/tmp/emotet/_post/RSA_key.png)
+![RSA_key](https://github.com/cecio/EMOTET-2020-Reversing/blob/main/pictures/RSA_key.png)
 
 After this we have a call to  `CryptGenKey` with algo `CALG_AES_128`. So it looks that the sample is going to use a symmetric key to encrypt communication.
 
