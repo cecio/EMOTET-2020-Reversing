@@ -57,7 +57,7 @@ An initial overview of the dumped DLL, shows immediately that we don't have any 
 
 I fired up **Ghidra** and started to snoop around. Starting from the only exported function `RunDLL` you quickly end up to `FUN_10009716` where you can spot a main loop with a kind of "State-Machine":
 
-<div style="text-align:center"><img src="https://github.com/cecio/EMOTET-2020-Reversing/blob/main/pictures/ghidra_main.PNG" alt="ghidra_main" style="zoom:75%;" /></div>
+<img src="https://github.com/cecio/EMOTET-2020-Reversing/blob/main/pictures/ghidra_main.PNG" alt="ghidra_main" style="zoom:75%;" />
 
 It looks like that a given double-word (stored in `ECX`) is controlling what the program is doing. But this looks convoluted and not very easy to unroll, since nothing is really in clear. For example, if you try to isolate the library API call in **x64dbg**, you will face something like this:
 
