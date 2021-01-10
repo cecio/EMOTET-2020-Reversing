@@ -22,7 +22,7 @@ In this repository you will find all the DLLs, scripts and tools used for the an
 
 EMOTET is usually spread by using e-mail campaign (in this case in Italian language)
 
-![emotet_mail](/home/cesare/Downloads/tmp/emotet/_post/emotet_mail.png)
+![emotet_mail](https://github.com/cecio/EMOTET-2020-Reversing/blob/main/pictures/emotet_mail.png)
 
 This particular sample is coming from what we can call the usual infection chain:
 
