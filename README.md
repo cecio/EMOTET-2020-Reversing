@@ -6,7 +6,7 @@ Around the 20th of December 2020, there was one of the "usual" EMOTET email camp
 
 In particular I had a look to how the malware has been written, with an analysis of the interesting techniques used.
 
-There is a very good analysis done by [Fortinet](https://www.fortinet.com/blog/threat-research/deep-dive-into-emotet-malware) of the last year, where the also the first stage has been analyzed. My exercise is more focused on the second stage on a recent sample.
+There is a very good analysis done by [Fortinet](https://www.fortinet.com/blog/threat-research/deep-dive-into-emotet-malware) in 2019, where the also the first stage has been analyzed. My exercise is more focused on the second stage on a recent sample.
 
 In this repository you will find all the DLLs, scripts and tools used for the analysis, with the **annotated Ghidra project file,** with all the mapping to my findings (API calls, program logic, etc). You can use this as starting point for additional investigation on it. Enjoy ;-)
 
