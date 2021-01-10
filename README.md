@@ -12,8 +12,6 @@ In this repository you will find all the DLLs, scripts and tools used for the an
 
 ## The Tools 
 
-------
-
 - FireEye [Speakeasy](https://github.com/fireeye/speakeasy)
 - [Ghidra](https://ghidra-sre.org/)
 - [x64dbg](https://x64dbg.com/#start)
@@ -21,8 +19,6 @@ In this repository you will find all the DLLs, scripts and tools used for the an
 - time :-)
 
 ## The infection chain
-
-------
 
 EMOTET is usually spread by using e-mail campaign (in this case in Italian language)
 
@@ -36,8 +32,6 @@ This particular sample is coming from what we can call the usual infection chain
 4. the 2nd stage establish some persistence and try to connect a C2
 
 ## The initial triage
-
-------
 
 All the files used for this analysis are in the repository. The "dangerous" ones are password protected (with the usual pwd).
 
@@ -74,8 +68,6 @@ Every single API call is done in this way: there is a bunch of `MOV, XOR, SHIFT 
 The same "state" approach is also used in several sub-functions, not only in the main loop. So, everything looks time consuming, and I'd like to find a way to get the high level picture of it.
 
 ## Speakeasy
-
-------
 
 This tool is a little gem: **Speakeasy** can emulate the execution of user and kernel mode malware, allowing you to interact with the emulated code by using quick Python scripts. What I'd like to do was to map every single state of the machine (`ECX` value of the main loop), to something more meaningful, like DLL API calls.
 
@@ -121,8 +113,6 @@ This list was not complete (because I skipped on purpose some failing calls and 
 
 ## Mapping
 
-------
-
 With the help of **Speakeasy** output and a combination of dynamic and static analysis (done with **x64gdb** and **Ghidra**), I was able to reconstruct the main flows of the Malware. Consider that these flows are not complete, they are high level snapshot of what is going on for some (not all) the "states". I'm sure something is missing. This is the "main" flow
 
 ![emotet_diag_general](/home/cesare/Downloads/tmp/emotet/_post/emotet_diag_general.png)
@@ -148,8 +138,6 @@ I renamed the functions with this standard:
 
 ## Interesting findings: encrypted strings
 
-------
-
 All the strings are encrypted in a BLOB, located, in this particular dumped sample, at `0x1C800`
 
 ![encrypted_blob](/home/cesare/Downloads/tmp/emotet/_post/encrypted_blob.png)
@@ -163,8 +151,6 @@ Every single string is decrypted and then removed from memory after usage. This 
 As said before, I added a specific section in the **Speakeasy** script to dump those strings.
 
 ## Interesting findings: list of C2 servers
-
-------
 
 IP of C2 are dumped form the same BLOB (in this case at `0x1CA00`) just after the decryption in step `20a`. 
 
@@ -187,8 +173,6 @@ You can find the full list extracted in **IoC** section.
 
 ## Interesting findings: persistence
 
-------
-
 This particular sample obtain persistency by installing a System Service. This campaign deployed different versions of the DLL using also different techniques: `Run` Registry Key is one of them.
 
 The section installing the service is the **20a** (state `0x204C3E9E`). The high level steps are the following:
@@ -202,8 +186,6 @@ The section installing the service is the **20a** (state `0x204C3E9E`). The high
   
 
 ## Interesting findings: encrypted communications with C2
-
-------
 
 In section **8a** (state `0x1C904052`) we can spot out the load of a RSA public key
 
@@ -220,13 +202,9 @@ In section **20a** (state `0x386459ce`) we see how the communication is encrypte
 
 ## Wrap up
 
-------
-
 The analysis is far to be complete, there are a lot of unexplored part of the sample. At the end my goal was to build a procedure to make the analysis easier, even for different or future samples, where it would be faster to understand the overall picture. 
 
 ## Appendix: IoC
-
-------
 
 C2 IP list:
 
