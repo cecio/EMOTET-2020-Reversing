@@ -142,7 +142,7 @@ All the strings are encrypted in a BLOB, located, in this particular dumped samp
 
 ![encrypted_blob](https://github.com/cecio/EMOTET-2020-Reversing/blob/main/pictures/encrypted_blob.png)
 
-The green box is the XOR key and the yellow one is the length of the string. The function used to perform the decryption is the `__decrypt_buffer_string_FUN_10006aba` and `__decrypt_headers_footer_FUN_100033f4`
+The **green** box is the XOR key and the **yellow** one is the length of the string. The function used to perform the decryption is the `__decrypt_buffer_string_FUN_10006aba` and `__decrypt_headers_footer_FUN_100033f4`
 
 <img src="https://github.com/cecio/EMOTET-2020-Reversing/blob/main/pictures/Ghidra_6aba.PNG" alt="Ghidra_6aba"  />
 
